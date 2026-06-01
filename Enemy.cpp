@@ -22,6 +22,11 @@ Enemy::Enemy()
 	hImage_ = LoadGraph("Assets/panda_R.png");
 	pos_ = ENEMY_START_POS; //32はブロックの位置pos_
 	dir_ = INIT_ENEMY_DIR;
+
+	vecRad = 5.0f;
+	eVec = { 0.0f, 0.0f, 0.0f };
+
+	dir_ = UP;
 }
 
 Enemy::~Enemy()
@@ -50,15 +55,19 @@ void Enemy::Update()
 		{
 		case UP:
 			newPos.y -= ENEMY_DRAW_SIZE;
+			eVec = { 0.0f, -1.0f, 0.0f };
 			break;
 		case DOWN:
 			newPos.y += ENEMY_DRAW_SIZE;
+			eVec = { 0.0f, 1.0f, 0.0f };
 			break;
 		case LEFT:
 			newPos.x -= ENEMY_DRAW_SIZE;
+			eVec = { -1.0f, 0.0f, 0.0f };
 			break;
 		case RIGHT:
 			newPos.x += ENEMY_DRAW_SIZE;
+			eVec = { 1.0f, 0.0f, 0.0f };
 			break;
 		default:
 			break;
@@ -159,4 +168,14 @@ void Enemy::Draw()
 		animTimer = ANIM_INTERVAL + animTimer;
 	}
 	animTimer = animTimer - Time::DeltaTime();
+
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
+	DrawBox(pos_.x - CHA_SIZE * vecRad, pos_.y - CHA_SIZE * vecRad, pos_.x + CHA_SIZE * (vecRad + 1), pos_.y + CHA_SIZE * (vecRad + 1), GetColor(255, 0, 0), TRUE);
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+
+	DrawBox(pos_.x - (CHA_SIZE * eVec.x) * vecRad, pos_.y - (CHA_SIZE * eVec.y) * vecRad, 
+		pos_.x + (CHA_SIZE * eVec.x) * vecRad + 1, pos_.y + (CHA_SIZE * eVec.y) * vecRad, 
+		GetColor(0, 0, 255), TRUE);
+
+	DrawFormatString(50, 700, GetColor(0, 0, 0), "VEC.x : %f, VEC.y : %f", eVec.x, eVec.y);
 }

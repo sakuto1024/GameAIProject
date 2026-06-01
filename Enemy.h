@@ -14,5 +14,9 @@ public:
 	~Enemy();
 	void Update() override;
 	void Draw() override;
+
+private:
+	float vecRad;
+	VECTOR eVec;
 };
 

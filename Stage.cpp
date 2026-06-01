@@ -60,6 +60,7 @@ void Stage::Draw()
 		}
 	}
 
+	
 
 	//DrawCircle(pPos.x, pPos.y, 32, GetColor(0, 255, 0), FALSE);
 }
