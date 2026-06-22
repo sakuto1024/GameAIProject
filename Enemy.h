@@ -6,6 +6,9 @@
 class Enemy :
     public GameObject
 {
+private:
+	
+
 	int hImage_;//‰æ‘œID
 	Point pos_;//ˆÊ’u
 	DIR dir_;//ˆÚ“®•ûŒü
@@ -15,8 +18,21 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	enum STATE_PATTERN
+	{
+		PATROL,
+		CHASE,
+		ATTACK,
+		SEARCH
+	};
+
 private:
 	float vecRad;
 	VECTOR eVec;
+
+	int state_;
+
+	//EnemyStateBase* state = nullptr;
+	//EnemyStateBase* nextState = nullptr;
 };
 

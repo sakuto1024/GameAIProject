@@ -2,6 +2,7 @@
 #include "time.h"
 #include "Stage.h"
 #include "Player.h"
+#include <math.h>
 
 namespace
 {
@@ -27,6 +28,7 @@ Enemy::Enemy()
 	eVec = { 0.0f, 0.0f, 0.0f };
 
 	dir_ = UP;
+	state_ = PATROL;
 }
 
 Enemy::~Enemy()
@@ -35,6 +37,113 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
+	Player* player = FindGameObject<Player>();
+	Point pPos = player->GetPlayerPos();
+
+	float distanceX = (pPos.x - pos_.x) * (pPos.x - pos_.x);
+	float distanceY = (pPos.y - pos_.y) * (pPos.y - pos_.y);
+	float distance = distanceX + distanceY;
+
+	float radius = (128.0f + 128.0f) * (128.0f + 128.0f);
+
+	DrawFormatString(200, 700, GetColor(0, 0, 0), "RAD : %f", radius);
+	DrawFormatString(450, 700, GetColor(0, 0, 0), "DIST : %f", distance);
+
+	static int sTime = 0;
+	static float sCount = 0.0f;
+	sTime++;
+
+	DrawFormatString(780, 700, GetColor(0, 0, 0), "sCNT : %f", sCount);
+	DrawFormatString(650, 700, GetColor(0, 0, 0), "sTime : %d", sTime);
+
+
+	switch (state_)
+	{
+	case PATROL:
+	{
+		if (distance < radius)
+		{
+			state_ = CHASE;
+		}
+
+	}
+		break;
+	
+	case CHASE:
+		DrawString(10, 700, "検知", GetColor(0, 0, 0));
+
+		if (distanceX < distanceY)
+		{
+			if ((pPos.y - pos_.y) > 0)
+			{
+				dir_ = DOWN;
+			}
+			else
+			{
+				dir_ = UP;
+			}
+		}
+
+		else
+		{
+			if ((pPos.x - pos_.x) > 0)
+			{
+				dir_ = RIGHT;
+			}
+			else
+			{
+				dir_ = LEFT;
+			}
+		}
+
+		if (distance > radius)
+		{
+			state_ = SEARCH;
+		}
+
+		if (distance <= 5.0f)
+		{
+			state_ = ATTACK;
+		}
+
+		break;
+
+	case ATTACK:
+		if (distance > 10.0f)
+		{
+			state_ = SEARCH;
+		}
+
+		break;
+
+	case SEARCH:
+	
+
+		if (sTime % 150 == 0) {
+			dir_ = (DIR)(GetRand(3));
+		}
+
+		sCount++;
+
+		float a = fmodf(sCount, 600.0f);
+
+		if (a == 599.0f)
+		{
+			state_ = PATROL;
+		}
+
+		if (distance <= 5.0f)
+		{
+			state_ = ATTACK;
+		}
+
+
+
+		break;
+	}
+
+
+
 	//GetRand(数値)
 	//3秒に1回向きをランダムに変える
 	static float dir_timer = 3.0f;
@@ -94,43 +203,7 @@ void Enemy::Update()
 			}
 		}
 
-		Player* player = FindGameObject<Player>();
-		Point pPos = player->GetPlayerPos();
-
-		float distanceX = (pPos.x - pos_.x) * (pPos.x - pos_.x);
-		float distanceY = (pPos.y - pos_.y) * (pPos.y - pos_.y);
-		float distance = distanceX + distanceY;
-
-		float radius = (128.0f + 128.0f) * (128.0f + 128.0f);
-
-		if (distance < radius)
-		{
-			DrawString(10, 700, "検知", GetColor(0, 0, 0));
-
-			if (distanceX < distanceY)
-			{
-				if ((pPos.y - pos_.y) > 0)
-				{
-					dir_ = DOWN;
-				}
-				else
-				{
-					dir_ = UP;
-				}
-			}
-
-			else
-			{
-				if ((pPos.x - pos_.x) > 0)
-				{
-					dir_ = RIGHT;
-				}
-				else
-				{
-					dir_ = LEFT;
-				}
-			}
-		}
+		
 		
 
 		//DrawCircle(pos_.x + 16, pos_.y, 32 + 16, GetColor(0, 255, 0), TRUE);
@@ -177,5 +250,7 @@ void Enemy::Draw()
 		pos_.x + (CHA_SIZE * eVec.x) * vecRad + 1, pos_.y + (CHA_SIZE * eVec.y) * vecRad, 
 		GetColor(0, 0, 255), TRUE);
 
-	DrawFormatString(50, 700, GetColor(0, 0, 0), "VEC.x : %f, VEC.y : %f", eVec.x, eVec.y);
+	//DrawFormatString(50, 700, GetColor(0, 0, 0), "VEC.x : %f, VEC.y : %f", eVec.x, eVec.y);
+
+	DrawFormatString(50, 700, GetColor(0, 0, 0), "STATE : %d", state_);
 }
