@@ -1,10 +1,12 @@
 #pragma once
-#include "Enemy.h"
-class EnemyStateBase :
-    public Enemy
+#include ".\Library\GameObject.h"
+
+
+class Enemy;
+
+class EnemyStateBase : public GameObject
 {
 public:
-    EnemyStateBase();
     virtual ~EnemyStateBase() = default;
 
     virtual void Update(Enemy& enemy) = 0;

@@ -14,6 +14,8 @@ namespace
 	const float ANIM_INTERVAL = 0.2f;
 
 	int mapData[];
+
+
 }
 
 
@@ -27,8 +29,11 @@ Enemy::Enemy()
 	vecRad = 5.0f;
 	eVec = { 0.0f, 0.0f, 0.0f };
 
-	dir_ = UP;
+	dir_ = DOWN;
 	state_ = PATROL;
+
+	
+
 }
 
 Enemy::~Enemy()
@@ -61,8 +66,12 @@ void Enemy::Update()
 	{
 	case PATROL:
 	{
-		if (distance < radius)
+		/*if (distance < radius)
 		{
+			state_ = CHASE;
+		}*/
+
+		if (pPos.x >= (eView.x1 + pos_.x) && pPos.x <= (eView.x2 + pos_.x) && pPos.y >= (eView.y1 + pos_.y) && pPos.y <= (eView.y2 + pos_.y)) {
 			state_ = CHASE;
 		}
 
@@ -158,25 +167,42 @@ void Enemy::Update()
 	}*/
 
 	Point newPos = pos_;
+	
 	if (prog_timer < 0.0f)
 	{
 		switch (dir_)
 		{
 		case UP:
 			newPos.y -= ENEMY_DRAW_SIZE;
-			eVec = { 0.0f, -1.0f, 0.0f };
+			eVec = { 0.0f, 0.0f, 0.0f };
+			eView.x1 = -(CHA_SIZE * vecRad);
+			eView.y1 = -(CHA_SIZE * vecRad);
+			eView.x2 = CHA_SIZE * (vecRad + 1.0f);
+			eView.y2 = 0.0f;
 			break;
 		case DOWN:
 			newPos.y += ENEMY_DRAW_SIZE;
-			eVec = { 0.0f, 1.0f, 0.0f };
+			eVec = { 1.0f, 1.0f, 0.0f };
+			eView.x1 = -(CHA_SIZE * vecRad);
+			eView.y1 = CHA_SIZE;
+			eView.x2 = CHA_SIZE * (vecRad + 1.0f);
+			eView.y2 = CHA_SIZE * (vecRad + 1.0f);;
 			break;
 		case LEFT:
 			newPos.x -= ENEMY_DRAW_SIZE;
-			eVec = { -1.0f, 0.0f, 0.0f };
+			eVec = { 0.0f, -1.0f, 0.0f };
+			eView.x1 = -(CHA_SIZE * vecRad);
+			eView.y1 = -(CHA_SIZE * vecRad);
+			eView.x2 = 0.0f;
+			eView.y2 = CHA_SIZE * (vecRad + 1.0f);
 			break;
 		case RIGHT:
 			newPos.x += ENEMY_DRAW_SIZE;
 			eVec = { 1.0f, 0.0f, 0.0f };
+			eView.x1 = CHA_SIZE;
+			eView.y1 = -(CHA_SIZE * vecRad);
+			eView.x2 = CHA_SIZE * (vecRad + 1.0f);
+			eView.y2 = CHA_SIZE * (vecRad + 1.0f);
 			break;
 		default:
 			break;
@@ -243,12 +269,15 @@ void Enemy::Draw()
 	animTimer = animTimer - Time::DeltaTime();
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, 128);
-	DrawBox(pos_.x - CHA_SIZE * vecRad, pos_.y - CHA_SIZE * vecRad, pos_.x + CHA_SIZE * (vecRad + 1), pos_.y + CHA_SIZE * (vecRad + 1), GetColor(255, 0, 0), TRUE);
+	//DrawBox(pos_.x - CHA_SIZE * vecRad, pos_.y - CHA_SIZE * vecRad, pos_.x + CHA_SIZE * (vecRad + 1), pos_.y + CHA_SIZE * (vecRad + 1), GetColor(255, 0, 0), TRUE);
+	DrawBox(pos_.x + eView.x1, pos_.y + eView.y1, pos_.x + eView.x2, pos_.y + eView.y2, GetColor(0, 0, 255), TRUE);
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 
-	DrawBox(pos_.x - (CHA_SIZE * eVec.x) * vecRad, pos_.y - (CHA_SIZE * eVec.y) * vecRad, 
+	/*DrawBox(pos_.x - (CHA_SIZE * eVec.x) * vecRad, pos_.y - (CHA_SIZE * eVec.y) * vecRad, 
 		pos_.x + (CHA_SIZE * eVec.x) * vecRad + 1, pos_.y + (CHA_SIZE * eVec.y) * vecRad, 
-		GetColor(0, 0, 255), TRUE);
+		GetColor(0, 0, 255), TRUE);*/
+
+
 
 	//DrawFormatString(50, 700, GetColor(0, 0, 0), "VEC.x : %f, VEC.y : %f", eVec.x, eVec.y);
 
