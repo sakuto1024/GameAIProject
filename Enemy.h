@@ -8,8 +8,6 @@ class Enemy :
     public GameObject
 {
 private:
-	
-
 	int hImage_;//‰æ‘œID
 	Point pos_;//ˆÊ’u
 	DIR dir_;//ˆÚ“®•ûŒü
@@ -19,6 +17,16 @@ public:
 	~Enemy();
 	void Update() override;
 	void Draw() override;
+
+	void ChangeState(EnemyStateBase* nextState);
+	void ApplyStateChange();
+
+	bool IsTimeOver();
+
+	void Patrol();
+	void Chase();
+	void Attack();
+	void Search();
 
 	enum STATE_PATTERN
 	{
@@ -35,6 +43,7 @@ public:
 	};
 
 
+
 private:
 	float vecRad;
 	VECTOR eVec;
@@ -45,7 +54,7 @@ private:
 
 	View eView;
 
-	//EnemyStateBase* state = nullptr;
-	//EnemyStateBase* nextState = nullptr;
+	EnemyStateBase* stateBase_ = nullptr;
+	EnemyStateBase* nextState_ = nullptr;
 };
 

@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Player.h"
 #include <math.h>
+#include "EnemyStateBase.h"
 
 namespace
 {
@@ -244,6 +245,13 @@ void Enemy::Update()
 		prog_timer = 0.5f + prog_timer;
 	}
 
+
+	if (stateBase_ != nullptr)
+	{
+		stateBase_->Update(*this);
+	}
+
+	ApplyStateChange();
 }
 
 void Enemy::Draw()
@@ -283,3 +291,23 @@ void Enemy::Draw()
 
 	DrawFormatString(50, 700, GetColor(0, 0, 0), "STATE : %d", state_);
 }
+
+void Enemy::ChangeState(EnemyStateBase* nextState)
+{
+	delete nextState_;
+	nextState_ = nextState;
+}
+
+void Enemy::ApplyStateChange()
+{
+	if (nextState_ == nullptr)
+	{
+		return;
+	}
+
+	delete stateBase_;
+	stateBase_ = nextState_;
+	nextState_ = nullptr;
+}
+
+
