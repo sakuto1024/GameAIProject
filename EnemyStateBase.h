@@ -1,7 +1,6 @@
 #pragma once
 #include ".\Library\GameObject.h"
 
-
 class Enemy;
 
 class EnemyStateBase : public GameObject
